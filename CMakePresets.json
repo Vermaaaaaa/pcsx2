@@ -13,13 +13,33 @@
             "hidden": true,
             "binaryDir": "${sourceDir}/build",
             "generator": "Ninja",
-            "cacheVariables": {
-                "CMAKE_EXE_LINKER_FLAGS_INIT": "-fuse-ld=lld",
-                "CMAKE_MODULE_LINKER_FLAGS_INIT": "-fuse-ld=lld",
-                "CMAKE_SHARED_LINKER_FLAGS_INIT": "-fuse-ld=lld",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++"
+          "cacheVariables": {
+            "CMAKE_EXE_LINKER_FLAGS_INIT": "-fuse-ld=lld",
+            "CMAKE_MODULE_LINKER_FLAGS_INIT": "-fuse-ld=lld",
+            "CMAKE_SHARED_LINKER_FLAGS_INIT": "-fuse-ld=lld",
+            "CMAKE_C_COMPILER": "clang-cl",
+            "CMAKE_CXX_COMPILER": "clang-cl",
+            "CMAKE_INCLUDE_PATH": {
+              "type": "PATH",
+              "value": "D:/PCSX2 Dev/pcsx2/deps;D:/PCSX2 Dev/pcsx2/deps/include"
+            },
+            "CMAKE_LIBRARY_PATH": {
+              "type": "PATH",
+              "value": "D:/PCSX2 Dev/pcsx2/deps;D:/PCSX2 Dev/pcsx2/deps/lib"
+            },
+            "CMAKE_PREFIX_PATH": {
+              "type": "PATH",
+              "value": "D:/PCSX2 Dev/pcsx2/deps"
+            },
+            "SDL3_DIR": {
+              "type": "PATH",
+              "value": "D:/PCSX2 Dev/pcsx2/deps/cmake"
+            },
+            "CMAKE_INSTALL_PREFIX": {
+              "type": "PATH",
+              "value": "D:/PCSX2 Dev/pcsx2/bin"
             }
+          }
         },
         {
             "name": "ninja-multi",
