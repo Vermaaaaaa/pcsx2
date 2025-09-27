@@ -15,6 +15,9 @@ target_sources(pcsx2-qt PRIVATE
 	AutoUpdaterDialog.ui
 	ColorPickerButton.cpp
 	ColorPickerButton.h
+	CompressDialog.cpp
+	CompressDialog.h
+	CompressDialog.ui
 	CoverDownloadDialog.cpp
 	CoverDownloadDialog.h
 	CoverDownloadDialog.ui

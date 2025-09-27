@@ -21,23 +21,27 @@
             "CMAKE_CXX_COMPILER": "clang-cl",
             "CMAKE_INCLUDE_PATH": {
               "type": "PATH",
-              "value": "D:/PCSX2 Dev/pcsx2/deps;D:/PCSX2 Dev/pcsx2/deps/include"
+              "value": "D:/PCSX2Dev/pcsx2/deps;D:/PCSX2Dev/pcsx2/deps/include"
             },
             "CMAKE_LIBRARY_PATH": {
               "type": "PATH",
-              "value": "D:/PCSX2 Dev/pcsx2/deps;D:/PCSX2 Dev/pcsx2/deps/lib"
+              "value": "D:/PCSX2Dev/pcsx2/deps;D:/PCSX2Dev/pcsx2/deps/lib"
             },
             "CMAKE_PREFIX_PATH": {
               "type": "PATH",
-              "value": "D:/PCSX2 Dev/pcsx2/deps"
+              "value": "D:/PCSX2Dev/pcsx2/deps"
             },
             "SDL3_DIR": {
               "type": "PATH",
-              "value": "D:/PCSX2 Dev/pcsx2/deps/cmake"
+              "value": "D:/PCSX2Dev/pcsx2/deps/cmake"
             },
             "CMAKE_INSTALL_PREFIX": {
               "type": "PATH",
-              "value": "D:/PCSX2 Dev/pcsx2/bin"
+              "value": "D:/PCSX2Dev/pcsx2/bin"
+            },
+            "CMAKE_MAKE_PROGRAM": {
+              "type": "PATH",
+              "value": "C:/Users/Raz/AppData/Local/Microsoft/WinGet/Packages/Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe/ninja.exe"
             }
           }
         },

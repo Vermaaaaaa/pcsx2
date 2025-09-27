@@ -3,6 +3,7 @@
 
 #include "AboutDialog.h"
 #include "AutoUpdaterDialog.h"
+#include "CompressDialog.h"
 #include "CoverDownloadDialog.h"
 #include "DisplayWidget.h"
 #include "GameList/GameListRefreshThread.h"
@@ -1440,6 +1441,10 @@ void MainWindow::onGameListEntryContextMenuRequested(const QPoint& point)
 					entry->title, entry->serial, entry->crc, entry->type == GameList::EntryType::ELF, nullptr);
 			});
 		}
+
+		action = menu.addAction(tr("Compress..."));
+		connect(action, &QAction::triggered, [this, entry]() { onCompressDialogRequested(QString::fromStdString(entry->path)); });
+
 
 		action = menu.addAction(QtUtils::GetShowInFileExplorerMessage());
 		connect(action, &QAction::triggered, [this, entry]() {
@@ -3349,4 +3354,11 @@ const QString& QtHost::GetCurrentGameSerial()
 const QString& QtHost::GetCurrentGamePath()
 {
 	return s_current_disc_path;
+}
+
+void MainWindow::onCompressDialogRequested(const QString& file_path)
+{
+	CompressDialog* dialog = new CompressDialog(this, file_path);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->show();
 }

@@ -16,6 +16,7 @@
 #include "Settings/SettingsWindow.h"
 #include "Debugger/DebuggerWindow.h"
 #include "ui_MainWindow.h"
+#include "CompressDialog.h"
 
 class QProgressBar;
 
@@ -203,6 +204,8 @@ private Q_SLOTS:
 
 	void onAchievementsLoginRequested(Achievements::LoginRequestReason reason);
 	void onAchievementsHardcoreModeChanged(bool enabled);
+
+	void onCompressDialogRequested(const QString& file_path);
 
 protected:
 	void showEvent(QShowEvent* event) override;
