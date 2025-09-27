@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 
 #include "GS.h"
+#include "GS/GSGL.h"
 #include "GSDevice11.h"
 #include "GS/Renderers/DX11/D3D.h"
 #include "GS/GSExtra.h"
@@ -1229,22 +1230,48 @@ std::unique_ptr<GSDownloadTexture> GSDevice11::CreateDownloadTexture(u32 width, 
 
 void GSDevice11::CopyRect(GSTexture* sTex, GSTexture* dTex, const GSVector4i& r, u32 destX, u32 destY)
 {
-	CommitClear(sTex);
-	CommitClear(dTex);
-
-	g_perfmon.Put(GSPerfMon::TextureCopies, 1);
-
-	// DX11 doesn't support partial depth copy so we need to
-	// either pass a nullptr D3D11_BOX for a full depth copy or use CopyResource instead.
-	// Optimization: Use CopyResource for depth copies, it's faster than CopySubresourceRegion.
-	if (sTex->GetType() == GSTexture::Type::DepthStencil)
+	// Empty rect, abort copy.
+	if (r.rempty())
 	{
-		m_ctx->CopyResource(*static_cast<GSTexture11*>(dTex), *static_cast<GSTexture11*>(sTex));
+		GL_INS("D3D11: CopyRect rect empty.");
 		return;
 	}
 
-	D3D11_BOX box = {static_cast<UINT>(r.left), static_cast<UINT>(r.top), 0U, static_cast<UINT>(r.right), static_cast<UINT>(r.bottom), 1U};
-	m_ctx->CopySubresourceRegion(*static_cast<GSTexture11*>(dTex), 0, destX, destY, 0, *static_cast<GSTexture11*>(sTex), 0, &box);
+	const GSVector4i dst_rect(0, 0, dTex->GetWidth(), dTex->GetHeight());
+	const bool full_draw_copy = sTex->IsDepthStencil() || dst_rect.eq(r);
+
+	// Source is cleared, if destination is a render target, we can carry the clear forward.
+	if (sTex->GetState() == GSTexture::State::Cleared)
+	{
+		if (dTex->IsRenderTargetOrDepthStencil() && ProcessClearsBeforeCopy(sTex, dTex, full_draw_copy))
+			return;
+
+		// Commit clear for the source texture.
+		CommitClear(sTex);
+	}
+
+	g_perfmon.Put(GSPerfMon::TextureCopies, 1);
+
+	// Commit destination clear if partially overwritten (color only).
+	if (dTex->GetState() == GSTexture::State::Cleared && !full_draw_copy)
+		CommitClear(dTex);
+
+	// DX11 doesn't support partial depth copy so we need to
+	// either pass a nullptr D3D11_BOX for a full depth copy or use CopyResource instead.
+	// Optimization: Use CopyResource for depth copies or full rect color copies, it's faster than CopySubresourceRegion.
+	const GSVector4i src_rect(0, 0, sTex->GetWidth(), sTex->GetHeight());
+	const bool full_rt_copy = sTex->IsDepthStencil() || (destX == 0 && destY == 0 && r.eq(src_rect) && src_rect.eq(dst_rect));
+	if (full_rt_copy)
+	{
+		m_ctx->CopyResource(*static_cast<GSTexture11*>(dTex), *static_cast<GSTexture11*>(sTex));
+	}
+	else
+	{
+		const D3D11_BOX box = {static_cast<UINT>(r.left), static_cast<UINT>(r.top), 0U, static_cast<UINT>(r.right), static_cast<UINT>(r.bottom), 1U};
+		m_ctx->CopySubresourceRegion(*static_cast<GSTexture11*>(dTex), 0, destX, destY, 0, *static_cast<GSTexture11*>(sTex), 0, &box);
+	}
+
+	dTex->SetState(GSTexture::State::Dirty);
 }
 
 void GSDevice11::StretchRect(GSTexture* sTex, const GSVector4& sRect, GSTexture* dTex, const GSVector4& dRect, ShaderConvert shader, bool linear)
